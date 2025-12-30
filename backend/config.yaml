@@ -1,0 +1,36 @@
+# Dashboard backend configuration
+server:
+  host: "0.0.0.0"
+  port: 8080
+  mode: "debug" # debug, release
+
+# Basic Authentication
+auth:
+  username: "admin"
+  password: "admin123"
+
+# Storage configuration
+storage:
+  type: "file" # file or database
+  
+  # File storage (when type is "file")
+  file:
+    routes_file: "/etc/rustun/routes.json"
+    routes_file_fallback: "./routes.json"
+  
+  # Database storage (when type is "database")
+  # Uncomment and configure when switching to database
+  # database:
+  #   type: "mysql" # mysql, postgres, sqlite
+  #   host: "localhost"
+  #   port: 3306
+  #   username: "rustun"
+  #   password: "password"
+  #   database: "rustun_dashboard"
+  #   # For SQLite, use:
+  #   # path: "./rustun.db"
+
+# Legacy field for backward compatibility
+rustun:
+  routes_file: "/etc/rustun/routes.json"
+  routes_file_fallback: "./routes.json"
