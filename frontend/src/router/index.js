@@ -9,30 +9,8 @@ const routes = [
   },
   {
     path: '/',
-    redirect: '/dashboard',
-  },
-  {
-    path: '/dashboard',
-    name: 'Dashboard',
-    component: () => import('../views/Dashboard.vue'),
-    meta: { requiresAuth: true },
-  },
-  {
-    path: '/clusters',
-    name: 'Clusters',
-    component: () => import('../views/Clusters.vue'),
-    meta: { requiresAuth: true },
-  },
-  {
-    path: '/clusters/:name',
-    name: 'ClusterDetail',
-    component: () => import('../views/ClusterDetail.vue'),
-    meta: { requiresAuth: true },
-  },
-  {
-    path: '/clients',
-    name: 'Clients',
-    component: () => import('../views/Clients.vue'),
+    name: 'Topology',
+    component: () => import('../views/Topology.vue'),
     meta: { requiresAuth: true },
   },
 ]
@@ -51,7 +29,7 @@ router.beforeEach((to, from, next) => {
   if (to.meta.requiresAuth && !isAuthenticated) {
     next('/login')
   } else if (to.path === '/login' && isAuthenticated) {
-    next('/dashboard')
+    next('/')
   } else {
     next()
   }

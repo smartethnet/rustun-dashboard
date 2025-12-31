@@ -83,19 +83,19 @@ func (h *ClientHandler) GetClient(c *gin.Context) {
 
 // CreateClient godoc
 // @Summary Create a client
-// @Description Add a new client to the configuration
+// @Description Add a new client to the configuration with auto-generated identity
 // @Tags clients
 // @Accept json
 // @Produce json
-// @Param client body model.Client true "Client configuration"
+// @Param client body model.ClientCreateRequest true "Client configuration"
 // @Success 201 {object} model.Response{data=model.Client}
 // @Failure 400 {object} model.ErrorResponse
 // @Failure 409 {object} model.ErrorResponse
 // @Failure 500 {object} model.ErrorResponse
 // @Router /api/clients [post]
 func (h *ClientHandler) CreateClient(c *gin.Context) {
-	var client model.Client
-	if err := c.ShouldBindJSON(&client); err != nil {
+	var req model.ClientCreateRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, model.ErrorResponseWithCode(
 			http.StatusBadRequest,
 			"Invalid request body",
@@ -104,7 +104,16 @@ func (h *ClientHandler) CreateClient(c *gin.Context) {
 		return
 	}
 
-	if err := h.routeService.CreateClient(client); err != nil {
+	// Convert request to client model
+	// Identity, PrivateIP, Mask, and Gateway will be auto-generated
+	client := model.Client{
+		Cluster: req.Cluster,
+		Name:    req.Name,
+		Ciders:  req.Ciders,
+	}
+
+	createdClient, err := h.routeService.CreateClient(client)
+	if err != nil {
 		statusCode := http.StatusInternalServerError
 		if err.Error() == "client already exists" {
 			statusCode = http.StatusConflict
@@ -117,7 +126,7 @@ func (h *ClientHandler) CreateClient(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, model.SuccessResponse(client))
+	c.JSON(http.StatusCreated, model.SuccessResponse(createdClient))
 }
 
 // UpdateClient godoc

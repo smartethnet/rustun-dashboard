@@ -12,6 +12,7 @@ type ClientDB struct {
 	ID        uint      `gorm:"primarykey" json:"id"`
 	Cluster   string    `gorm:"index:idx_cluster_identity,unique;not null" json:"cluster"`
 	Identity  string    `gorm:"index:idx_cluster_identity,unique;not null" json:"identity"`
+	Name      string    `gorm:"" json:"name"` // Optional friendly name
 	PrivateIP string    `gorm:"not null" json:"private_ip"`
 	Mask      string    `gorm:"not null" json:"mask"`
 	Gateway   string    `gorm:"not null" json:"gateway"`
@@ -30,6 +31,7 @@ func (c *ClientDB) ToClient() Client {
 	return Client{
 		Cluster:   c.Cluster,
 		Identity:  c.Identity,
+		Name:      c.Name,
 		PrivateIP: c.PrivateIP,
 		Mask:      c.Mask,
 		Gateway:   c.Gateway,
@@ -41,6 +43,7 @@ func (c *ClientDB) ToClient() Client {
 func (c *ClientDB) FromClient(client Client) {
 	c.Cluster = client.Cluster
 	c.Identity = client.Identity
+	c.Name = client.Name
 	c.PrivateIP = client.PrivateIP
 	c.Mask = client.Mask
 	c.Gateway = client.Gateway

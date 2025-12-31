@@ -9,6 +9,12 @@ auth:
   username: "admin"
   password: "admin123"
 
+# IP Address Management
+# All clusters share the same network: 10.12.0.0/16
+# Each cluster independently allocates IPs from this network
+# Gateway: 10.12.0.1, IP allocation starts from: 10.12.0.10
+# Note: Different clusters can have overlapping IPs (they are isolated networks)
+
 # Storage configuration
 storage:
   type: "file" # file or database

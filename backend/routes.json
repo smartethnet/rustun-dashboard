@@ -1,27 +1,36 @@
 [
   {
     "cluster": "production",
-    "identity": "prod-gateway-01",
-    "private_ip": "10.0.1.1",
-    "mask": "255.255.255.0",
-    "gateway": "10.0.1.254",
-    "ciders": ["192.168.100.0/24", "192.168.101.0/24"]
+    "identity": "laptop-9911",
+    "name": "公司",
+    "private_ip": "10.12.0.13",
+    "mask": "255.255.0.0",
+    "gateway": "10.12.0.1",
+    "ciders": [
+      "192.168.1.0/24",
+      "192.168.2.0/24",
+      "192.168.3.0/24"
+    ]
   },
   {
     "cluster": "production",
-    "identity": "prod-app-server-01",
-    "private_ip": "10.0.1.2",
-    "mask": "255.255.255.0",
-    "gateway": "10.0.1.254",
-    "ciders": []
+    "identity": "83db9983-e9df-4440-b2f2-ba0f8a1300c6",
+    "name": "北京",
+    "private_ip": "10.12.0.14",
+    "mask": "255.255.0.0",
+    "gateway": "10.12.0.1",
+    "ciders": [
+      "1.2.3.6/8",
+      "192.168.37.0/24"
+    ]
   },
   {
-    "cluster": "development",
-    "identity": "dev-workstation-01",
-    "private_ip": "10.0.3.1",
-    "mask": "255.255.255.0",
-    "gateway": "10.0.3.254",
+    "cluster": "production",
+    "identity": "f4427f9b-e587-480c-9b8e-b1c17161f94a",
+    "name": "家-NAS",
+    "private_ip": "10.12.0.10",
+    "mask": "255.255.0.0",
+    "gateway": "10.12.0.1",
     "ciders": []
   }
 ]
-

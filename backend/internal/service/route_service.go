@@ -3,18 +3,22 @@ package service
 import (
 	"fmt"
 
+	"github.com/google/uuid"
+	"github.com/smartethnet/rustun-dashboard/internal/ipadm"
 	"github.com/smartethnet/rustun-dashboard/internal/model"
 	"github.com/smartethnet/rustun-dashboard/internal/repository"
 )
 
 type RouteService struct {
-	repo repository.RouteRepository
+	repo      repository.RouteRepository
+	ipManager *ipadm.IPAdmManager
 }
 
-// NewRouteService creates a new route service with the given repository
-func NewRouteService(repo repository.RouteRepository) *RouteService {
+// NewRouteService creates a new route service with the given repository and IP manager
+func NewRouteService(repo repository.RouteRepository, ipManager *ipadm.IPAdmManager) *RouteService {
 	return &RouteService{
-		repo: repo,
+		repo:      repo,
+		ipManager: ipManager,
 	}
 }
 
@@ -75,9 +79,27 @@ func (s *RouteService) GetClient(clusterName, identity string) (*model.Client, e
 	return s.repo.GetByClusterAndIdentity(clusterName, identity)
 }
 
-// CreateClient adds a new client
-func (s *RouteService) CreateClient(client model.Client) error {
-	return s.repo.Create(client)
+// CreateClient adds a new client with auto-generated identity and IP
+func (s *RouteService) CreateClient(client model.Client) (*model.Client, error) {
+	// Generate UUID as identity
+	client.Identity = uuid.New().String()
+
+	// Allocate IP address with network config
+	allocated, err := s.ipManager.AllocateIP(client.Cluster)
+	if err != nil {
+		return nil, fmt.Errorf("failed to allocate IP: %w", err)
+	}
+	client.PrivateIP = allocated.IP
+	client.Gateway = allocated.Gateway
+	client.Mask = allocated.Mask
+
+	if err := s.repo.Create(client); err != nil {
+		// Release IP on failure
+		s.ipManager.ReleaseIP(client.Cluster, allocated.IP)
+		return nil, err
+	}
+
+	return &client, nil
 }
 
 // UpdateClient updates an existing client
@@ -85,7 +107,21 @@ func (s *RouteService) UpdateClient(clusterName, identity string, updatedClient 
 	return s.repo.Update(clusterName, identity, updatedClient)
 }
 
-// DeleteClient removes a client
+// DeleteClient removes a client and releases its IP
 func (s *RouteService) DeleteClient(clusterName, identity string) error {
-	return s.repo.Delete(clusterName, identity)
+	// Get client to retrieve its IP
+	client, err := s.repo.GetByClusterAndIdentity(clusterName, identity)
+	if err != nil {
+		return err
+	}
+
+	// Delete client
+	if err := s.repo.Delete(clusterName, identity); err != nil {
+		return err
+	}
+
+	// Release IP address
+	s.ipManager.ReleaseIP(clusterName, client.PrivateIP)
+
+	return nil
 }

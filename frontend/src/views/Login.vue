@@ -121,7 +121,7 @@ const handleLogin = async () => {
       localStorage.setItem('password', form.password)
       
       ElMessage.success(t('login.loginSuccess'))
-      router.push('/dashboard')
+      router.push('/')
     } catch (error) {
       ElMessage.error(t('login.loginFailed'))
     } finally {

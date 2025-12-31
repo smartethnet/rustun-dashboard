@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/smartethnet/rustun-dashboard/internal/handler"
+	"github.com/smartethnet/rustun-dashboard/internal/ipadm"
 	"github.com/smartethnet/rustun-dashboard/internal/middleware"
 	"github.com/smartethnet/rustun-dashboard/internal/model"
 	"github.com/smartethnet/rustun-dashboard/internal/repository"
@@ -56,8 +57,34 @@ func main() {
 		log.Printf("Using file storage: %s", cfg.Storage.File.RoutesFile)
 	}
 
+	// Initialize IP address manager
+	ipConfig := ipadm.IPConfig{
+		Network: "10.12.0.0/16",
+		Gateway: "10.12.0.1",
+		StartIP: "10.12.0.10",
+		Mask:    "255.255.0.0",
+	}
+	ipManager := ipadm.NewIPAdmManager(ipConfig)
+	log.Printf("Initialized IP address manager: network=%s, gateway=%s, start=%s",
+		ipConfig.Network, ipConfig.Gateway, ipConfig.StartIP)
+
+	// Initialize from existing clients
+	existingClients, err := repo.GetAll()
+	if err == nil && len(existingClients) > 0 {
+		clientInfos := make([]struct {
+			Cluster   string
+			PrivateIP string
+		}, len(existingClients))
+		for i, client := range existingClients {
+			clientInfos[i].Cluster = client.Cluster
+			clientInfos[i].PrivateIP = client.PrivateIP
+		}
+		ipManager.InitFromExistingClients(clientInfos)
+		log.Printf("Initialized IP allocations from %d existing clients", len(existingClients))
+	}
+
 	// Initialize services
-	routeService := service.NewRouteService(repo)
+	routeService := service.NewRouteService(repo, ipManager)
 
 	// Initialize handlers
 	clusterHandler := handler.NewClusterHandler(routeService)

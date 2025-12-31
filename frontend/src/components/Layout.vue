@@ -2,7 +2,8 @@
   <el-container class="layout-container">
     <el-aside width="220px" class="sidebar">
       <div class="logo">
-        <h2>🌐 Rustun</h2>
+        <h2>🔐 Rustun</h2>
+        <p class="logo-subtitle">{{ t('nav.topology') }}</p>
       </div>
       
       <el-menu
@@ -10,21 +11,35 @@
         class="sidebar-menu"
         @select="handleMenuSelect"
       >
-        <el-menu-item index="/dashboard">
-          <el-icon><Odometer /></el-icon>
-          <span>{{ t('nav.dashboard') }}</span>
-        </el-menu-item>
-        
-        <el-menu-item index="/clusters">
-          <el-icon><Collection /></el-icon>
-          <span>{{ t('nav.clusters') }}</span>
-        </el-menu-item>
-        
-        <el-menu-item index="/clients">
-          <el-icon><Monitor /></el-icon>
-          <span>{{ t('nav.clients') }}</span>
+        <el-menu-item index="/">
+          <el-icon><Share /></el-icon>
+          <span>{{ t('nav.topology') }}</span>
         </el-menu-item>
       </el-menu>
+      
+      <div class="sidebar-footer">
+        <div class="project-info">
+          <div class="project-name">Rustun Dashboard</div>
+          <div class="project-version">v1.0.0</div>
+        </div>
+        <div class="project-links">
+          <a href="https://github.com/smartethnet/rustun" target="_blank" class="project-link" :title="t('footer.github')">
+            <el-icon><Link /></el-icon>
+            <span>{{ t('footer.github') }}</span>
+          </a>
+          <a href="https://github.com/smartethnet/rustun#readme" target="_blank" class="project-link" :title="t('footer.docs')">
+            <el-icon><Document /></el-icon>
+            <span>{{ t('footer.docs') }}</span>
+          </a>
+          <a href="https://github.com/smartethnet/rustun/issues" target="_blank" class="project-link" :title="t('footer.issues')">
+            <el-icon><ChatDotSquare /></el-icon>
+            <span>{{ t('footer.issues') }}</span>
+          </a>
+        </div>
+        <div class="project-copyright">
+          © 2026 SmartEthNet
+        </div>
+      </div>
     </el-aside>
     
     <el-container>
@@ -83,6 +98,7 @@ import { computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessageBox } from 'element-plus'
+import { Link, Document, ChatDotSquare } from '@element-plus/icons-vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -96,12 +112,7 @@ const currentLanguage = computed(() => {
 })
 
 const pageTitle = computed(() => {
-  const titleMap = {
-    '/dashboard': t('nav.dashboard'),
-    '/clusters': t('nav.clusters'),
-    '/clients': t('nav.clients'),
-  }
-  return titleMap[route.path] || 'Rustun Dashboard'
+  return t('nav.topology')
 })
 
 const handleMenuSelect = (index) => {
@@ -145,19 +156,29 @@ const handleUserCommand = async (command) => {
   background: #304156;
   color: white;
   overflow-x: hidden;
+  position: relative;
+  padding-bottom: 200px;
+  display: flex;
+  flex-direction: column;
 }
 
 .logo {
-  padding: 20px;
+  padding: 24px 20px;
   text-align: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .logo h2 {
-  margin: 0;
+  margin: 0 0 8px 0;
   font-size: 20px;
   font-weight: 700;
   color: white;
+}
+
+.logo-subtitle {
+  margin: 0;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 500;
 }
 
 .sidebar-menu {
@@ -177,6 +198,69 @@ const handleUserCommand = async (command) => {
 .sidebar-menu :deep(.el-menu-item.is-active) {
   background: #409eff;
   color: white;
+}
+
+.sidebar-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.2);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.project-info {
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.project-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 4px;
+}
+
+.project-version {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.project-links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.project-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  font-size: 12px;
+  border-radius: 4px;
+  transition: all 0.3s;
+}
+
+.project-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.project-link .el-icon {
+  font-size: 14px;
+}
+
+.project-copyright {
+  text-align: center;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.4);
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .header {

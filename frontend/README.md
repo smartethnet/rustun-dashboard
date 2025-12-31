@@ -5,28 +5,39 @@ Modern web dashboard for Rustun VPN management, built with Vue 3, Vite, Tailwind
 ## Features
 
 - ✅ **Modern UI** - Clean and responsive design
-- ✅ **Vue 3** - Composition API with `<script setup>`
-- ✅ **Vite** - Lightning-fast development
-- ✅ **Element Plus** - Rich component library
-- ✅ **Tailwind CSS** - Utility-first CSS
-- ✅ **Pinia** - State management
-- ✅ **Vue Router** - Navigation
-- ✅ **Axios** - HTTP client with interceptors
-- ✅ **Basic Auth** - Secure authentication
+- ✅ **Network Topology** - Interactive visualization of VPN network structure
+- ✅ **Multi-language** - Support for English and Chinese
+- ✅ **Client Management** - Full CRUD operations for VPN clients
+- ✅ **Real-time Stats** - Live statistics and monitoring
+- ✅ **Responsive Design** - Works on desktop, tablet, and mobile
+
+## Technology Stack
+
+- **Vue 3** - Composition API with `<script setup>`
+- **Vite** - Lightning-fast development
+- **Element Plus** - Rich component library
+- **Tailwind CSS** - Utility-first CSS
+- **Pinia** - State management
+- **Vue Router** - Navigation
+- **Vue I18n** - Internationalization
+- **vis-network** - Network topology visualization
+- **Axios** - HTTP client
 
 ## Pages
 
-- **Login** - Authentication page
-- **Dashboard** - Overview with statistics
-- **Clusters** - Manage VPN clusters
-- **Cluster Detail** - View and manage cluster clients
+- **Login** - Authentication page with language switcher
+- **Dashboard** - Overview with statistics and quick access
+- **Network Topology** - Interactive network visualization
+  - Hierarchical layout showing clusters, clients, gateways, and routes
+  - Zoom, pan, and fit controls
+  - Real-time statistics
+  - Click nodes for details
 - **Clients** - List and manage all clients
+  - Filter by cluster
+  - Search by identity or IP
+  - CRUD operations
 
-## Development
-
-### Prerequisites
-
-- Node.js 16+ and npm
+## Quick Start
 
 ### Install Dependencies
 
@@ -35,7 +46,7 @@ cd frontend
 npm install
 ```
 
-### Start Development Server
+### Development Server
 
 ```bash
 npm run dev
@@ -70,6 +81,10 @@ frontend/
 │   ├── components/     # Reusable components
 │   │   ├── Layout.vue     # Main layout with sidebar
 │   │   └── ClientDialog.vue  # Add/Edit client dialog
+│   ├── locales/        # i18n translations
+│   │   ├── index.js    # i18n setup
+│   │   ├── en.js       # English translations
+│   │   └── zh.js       # Chinese translations
 │   ├── router/         # Vue Router
 │   │   └── index.js    # Routes and navigation guards
 │   ├── store/          # Pinia stores
@@ -77,16 +92,59 @@ frontend/
 │   ├── views/          # Page components
 │   │   ├── Login.vue
 │   │   ├── Dashboard.vue
-│   │   ├── Clusters.vue
-│   │   ├── ClusterDetail.vue
+│   │   ├── Topology.vue
 │   │   └── Clients.vue
 │   ├── App.vue         # Root component
 │   └── main.js         # Application entry
+├── docs/
+│   └── I18N.md         # i18n documentation
 ├── index.html
 ├── vite.config.js
 ├── tailwind.config.js
 ├── postcss.config.js
 └── package.json
+```
+
+## Network Topology
+
+The topology visualization shows:
+
+- **Clusters** - Blue boxes representing cluster groups
+- **Gateways** - Orange diamonds showing network gateways
+- **Clients** - Green circles for individual clients
+- **Routes** - Dashed lines showing CIDR routes
+
+### Features
+
+- **Hierarchical Layout** - Organized from clusters down to routes
+- **Interactive** - Zoom, pan, and click nodes for details
+- **Controls** - Zoom in/out, fit view, toggle labels
+- **Statistics** - Real-time node and connection counts
+- **Legend** - Visual guide to node types
+
+### Usage
+
+```vue
+<template>
+  <div ref="networkContainer" class="network-container"></div>
+</template>
+
+<script setup>
+import { Network } from 'vis-network/standalone'
+
+const initNetwork = () => {
+  const data = {
+    nodes: [...],
+    edges: [...]
+  }
+  
+  const options = {
+    layout: { hierarchical: { enabled: true } }
+  }
+  
+  network.value = new Network(container, data, options)
+}
+</script>
 ```
 
 ## Configuration
@@ -114,6 +172,26 @@ Basic Authentication credentials are stored in localStorage:
 - `password` - Password
 
 Default: `admin` / `admin123`
+
+## Multi-language Support
+
+### Available Languages
+
+- 🇺🇸 English (en)
+- 🇨🇳 中文 (zh)
+
+### Switch Language
+
+- **Login page** - Click language buttons at the top
+- **Main interface** - Click globe icon in header
+
+### Add New Language
+
+1. Create new language file in `src/locales/`
+2. Import and register in `src/locales/index.js`
+3. Update language switcher components
+
+See [I18N.md](docs/I18N.md) for detailed documentation.
 
 ## API Integration
 
@@ -188,6 +266,66 @@ Full component library:
 4. **Loading States** - Show loading indicators during async operations
 5. **Responsive Design** - Mobile-friendly with Tailwind breakpoints
 6. **Code Splitting** - Lazy load routes for better performance
+7. **i18n** - Use translation keys for all user-facing text
+
+## Development Tips
+
+### Hot Module Replacement
+
+Vite provides instant HMR. Your changes will reflect immediately.
+
+### Vue Devtools
+
+Install Vue Devtools browser extension for debugging:
+- Inspect component tree
+- View Pinia state
+- Track router navigation
+
+### Console Logging
+
+Use `console.log` for debugging, but remove before committing:
+
+```js
+// Development
+console.log('Data:', data)
+
+// Production
+// Remove or use proper logging service
+```
+
+## Deployment
+
+### Build
+
+```bash
+npm run build
+```
+
+### Serve Static Files
+
+```bash
+# Using nginx
+server {
+  listen 80;
+  root /path/to/dist;
+  
+  location / {
+    try_files $uri $uri/ /index.html;
+  }
+  
+  location /api {
+    proxy_pass http://localhost:8080;
+  }
+}
+```
+
+### Environment Variables
+
+Create `.env.production`:
+
+```env
+VITE_API_BASE_URL=https://api.your-domain.com
+```
 
 ## Browser Support
 
@@ -196,7 +334,39 @@ Full component library:
 - Safari (latest)
 - Edge (latest)
 
+## Troubleshooting
+
+### Port Already in Use
+
+```bash
+# Kill process on port 3000
+lsof -ti:3000 | xargs kill -9
+```
+
+### Node Version
+
+Requires Node.js 16+ and npm 7+
+
+```bash
+node --version  # Should be >= 16.0.0
+npm --version   # Should be >= 7.0.0
+```
+
+### Clear Cache
+
+```bash
+rm -rf node_modules package-lock.json
+npm install
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit changes (`git commit -m 'Add amazing feature'`)
+4. Push to branch (`git push origin feature/amazing-feature`)
+5. Open Pull Request
+
 ## License
 
 MIT
-
