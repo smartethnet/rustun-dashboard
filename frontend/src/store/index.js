@@ -14,7 +14,7 @@ export const useAppStore = defineStore('app', () => {
     loading.value = true
     try {
       const response = await clusterAPI.getAll()
-      clusters.value = response.data || []
+      clusters.value = response.data.data || []
       return clusters.value
     } catch (error) {
       console.error('Failed to fetch clusters:', error)
@@ -29,7 +29,7 @@ export const useAppStore = defineStore('app', () => {
     loading.value = true
     try {
       const response = await clientAPI.getAll(cluster)
-      clients.value = response.data || []
+      clients.value = response.data.data || []
       return clients.value
     } catch (error) {
       console.error('Failed to fetch clients:', error)

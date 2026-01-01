@@ -2,8 +2,8 @@
   <el-container class="layout-container">
     <el-aside width="220px" class="sidebar">
       <div class="logo">
-        <h2>🔐 Rustun</h2>
-        <p class="logo-subtitle">{{ t('nav.topology') }}</p>
+        <h2>🌐 Rustun</h2>
+        <p class="logo-subtitle">{{ t('nav.subtitle') }}</p>
       </div>
       
       <el-menu
@@ -11,9 +11,13 @@
         class="sidebar-menu"
         @select="handleMenuSelect"
       >
-        <el-menu-item index="/">
+        <el-menu-item index="/topology">
           <el-icon><Share /></el-icon>
           <span>{{ t('nav.topology') }}</span>
+        </el-menu-item>
+        <el-menu-item index="/ai">
+          <el-icon><ChatDotRound /></el-icon>
+          <span>{{ t('nav.aiChat') }}</span>
         </el-menu-item>
       </el-menu>
       
@@ -52,7 +56,7 @@
           <!-- Language Switcher -->
           <el-dropdown @command="handleLanguageChange">
             <div class="language-dropdown">
-              <el-icon><Globe /></el-icon>
+              🌐
               <span>{{ currentLanguage }}</span>
             </div>
             <template #dropdown>
@@ -87,7 +91,7 @@
       </el-header>
       
       <el-main class="main-content">
-        <slot />
+        <router-view />
       </el-main>
     </el-container>
   </el-container>
@@ -98,7 +102,7 @@ import { computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ElMessageBox } from 'element-plus'
-import { Link, Document, ChatDotSquare } from '@element-plus/icons-vue'
+import { Link, Document, ChatDotRound, ChatDotSquare, Share, User, ArrowDown, SwitchButton } from '@element-plus/icons-vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -112,6 +116,9 @@ const currentLanguage = computed(() => {
 })
 
 const pageTitle = computed(() => {
+  if (route.path === '/ai' || route.path === '/ai/') {
+    return t('nav.aiChat')
+  }
   return t('nav.topology')
 })
 
@@ -141,7 +148,7 @@ const handleUserCommand = async (command) => {
       localStorage.removeItem('password')
       router.push('/login')
     } catch {
-      // Cancel logout
+      // User cancelled
     }
   }
 }
@@ -155,35 +162,33 @@ const handleUserCommand = async (command) => {
 .sidebar {
   background: #304156;
   color: white;
-  overflow-x: hidden;
-  position: relative;
-  padding-bottom: 200px;
   display: flex;
   flex-direction: column;
 }
 
 .logo {
-  padding: 24px 20px;
+  padding: 20px;
   text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .logo h2 {
-  margin: 0 0 8px 0;
+  margin: 0;
   font-size: 20px;
   font-weight: 700;
   color: white;
 }
 
 .logo-subtitle {
-  margin: 0;
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.6);
-  font-weight: 500;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: 5px;
 }
 
 .sidebar-menu {
   border: none;
   background: transparent;
+  flex: 1;
 }
 
 .sidebar-menu :deep(.el-menu-item) {
@@ -201,29 +206,23 @@ const handleUserCommand = async (command) => {
 }
 
 .sidebar-footer {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
   padding: 16px;
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.1);
   border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 12px;
 }
 
 .project-info {
   margin-bottom: 12px;
-  text-align: center;
 }
 
 .project-name {
-  font-size: 13px;
-  font-weight: 600;
+  font-weight: bold;
   color: white;
   margin-bottom: 4px;
 }
 
 .project-version {
-  font-size: 11px;
   color: rgba(255, 255, 255, 0.5);
 }
 
@@ -238,29 +237,20 @@ const handleUserCommand = async (command) => {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 10px;
   color: rgba(255, 255, 255, 0.7);
   text-decoration: none;
-  font-size: 12px;
-  border-radius: 4px;
-  transition: all 0.3s;
+  transition: color 0.2s;
 }
 
 .project-link:hover {
-  background: rgba(255, 255, 255, 0.1);
   color: white;
-}
-
-.project-link .el-icon {
-  font-size: 14px;
 }
 
 .project-copyright {
   text-align: center;
-  font-size: 11px;
-  color: rgba(255, 255, 255, 0.4);
-  padding-top: 8px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.5);
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .header {
@@ -328,4 +318,3 @@ const handleUserCommand = async (command) => {
   min-height: calc(100vh - 60px);
 }
 </style>
-

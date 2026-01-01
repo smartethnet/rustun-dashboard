@@ -10,6 +10,7 @@ import (
 type Config struct {
 	Server  ServerConfig  `mapstructure:"server"`
 	Auth    AuthConfig    `mapstructure:"auth"`
+	Agent   AgentConfig   `mapstructure:"agent"`
 	Storage StorageConfig `mapstructure:"storage"`
 	Rustun  RustunConfig  `mapstructure:"rustun"` // Legacy, for backward compatibility
 }
@@ -23,6 +24,16 @@ type ServerConfig struct {
 type AuthConfig struct {
 	Username string `mapstructure:"username"`
 	Password string `mapstructure:"password"`
+}
+
+type AgentConfig struct {
+	Enabled        bool   `mapstructure:"enabled"`
+	Provider       string `mapstructure:"provider"`         // openai, deepseek, ollama
+	OpenAIAPIKey   string `mapstructure:"openai_api_key"`   // For OpenAI
+	DeepSeekAPIKey string `mapstructure:"deepseek_api_key"` // For DeepSeek
+	Model          string `mapstructure:"model"`
+	BaseURL        string `mapstructure:"base_url"`        // Custom API endpoint
+	LocalModelURL  string `mapstructure:"local_model_url"` // For future Ollama support
 }
 
 type StorageConfig struct {
@@ -71,6 +82,10 @@ func Load(configPath string) (*Config, error) {
 	v.SetDefault("storage.database.type", "mysql")
 	v.SetDefault("storage.database.host", "localhost")
 	v.SetDefault("storage.database.port", 3306)
+
+	v.SetDefault("agent.enabled", true)
+	v.SetDefault("agent.provider", "openai")
+	v.SetDefault("agent.model", "gpt-4o-mini")
 
 	// Legacy defaults
 	v.SetDefault("rustun.routes_file", "/etc/rustun/routes.json")

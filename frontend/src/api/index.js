@@ -1,105 +1,65 @@
 import axios from 'axios'
-import { ElMessage } from 'element-plus'
 
-// Create axios instance
-const api = axios.create({
-  baseURL: '/api',
-  timeout: 10000,
-})
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
 
-// Request interceptor
-api.interceptors.request.use(
-  (config) => {
-    // Add Basic Auth
-    const username = localStorage.getItem('username') || 'admin'
-    const password = localStorage.getItem('password') || 'admin123'
-    const token = btoa(`${username}:${password}`)
-    config.headers.Authorization = `Basic ${token}`
-    return config
-  },
-  (error) => {
-    return Promise.reject(error)
-  }
-)
+// Create axios instance with basic auth
+const createAuthAxios = () => {
+  const username = localStorage.getItem('username')
+  const password = localStorage.getItem('password')
 
-// Response interceptor
-api.interceptors.response.use(
-  (response) => {
-    return response.data
-  },
-  (error) => {
-    const message = error.response?.data?.message || error.message || 'Request failed'
-    ElMessage.error(message)
-    
-    if (error.response?.status === 401) {
-      // Clear credentials on auth failure
-      localStorage.removeItem('username')
-      localStorage.removeItem('password')
-      window.location.href = '/login'
+  return axios.create({
+    baseURL: API_BASE_URL,
+    auth: {
+      username,
+      password
     }
-    
-    return Promise.reject(error)
-  }
-)
+  })
+}
 
-// Cluster APIs
+// Cluster API
 export const clusterAPI = {
-  // Get all clusters
-  getAll() {
-    return api.get('/clusters')
+  getAll: async () => {
+    const api = createAuthAxios()
+    return await api.get('/api/clusters')
   },
-  
-  // Get cluster by name
-  getByName(name) {
-    return api.get(`/clusters/${name}`)
+
+  getByName: async (name) => {
+    const api = createAuthAxios()
+    return await api.get(`/api/clusters/${name}`)
   },
-  
-  // Delete cluster
-  delete(name) {
-    return api.delete(`/clusters/${name}`)
-  },
+
+  delete: async (name) => {
+    const api = createAuthAxios()
+    return await api.delete(`/api/clusters/${name}`)
+  }
 }
 
-// Client APIs
+// Client API
 export const clientAPI = {
-  // Get all clients
-  getAll(cluster = '') {
+  getAll: async (cluster = '') => {
+    const api = createAuthAxios()
     const params = cluster ? { cluster } : {}
-    return api.get('/clients', { params })
+    return await api.get('/api/clients', { params })
   },
-  
-  // Get client by cluster and identity
-  getByClusterAndIdentity(cluster, identity) {
-    return api.get(`/clients/${cluster}/${identity}`)
+
+  getByClusterAndIdentity: async (cluster, identity) => {
+    const api = createAuthAxios()
+    return await api.get(`/api/clients/${cluster}/${identity}`)
   },
-  
-  // Create client
-  create(data) {
-    return api.post('/clients', data)
+
+  create: async (data) => {
+    const api = createAuthAxios()
+    return await api.post('/api/clients', data)
   },
-  
-  // Update client
-  update(cluster, identity, data) {
-    return api.put(`/clients/${cluster}/${identity}`, data)
+
+  update: async (cluster, identity, data) => {
+    const api = createAuthAxios()
+    return await api.put(`/api/clients/${cluster}/${identity}`, data)
   },
-  
-  // Delete client
-  delete(cluster, identity) {
-    return api.delete(`/clients/${cluster}/${identity}`)
-  },
+
+  delete: async (cluster, identity) => {
+    const api = createAuthAxios()
+    return await api.delete(`/api/clients/${cluster}/${identity}`)
+  }
 }
 
-// Auth API
-export const authAPI = {
-  // Test credentials
-  test(username, password) {
-    const token = btoa(`${username}:${password}`)
-    return axios.get('/api/clusters', {
-      headers: {
-        Authorization: `Basic ${token}`,
-      },
-    })
-  },
-}
-
-export default api

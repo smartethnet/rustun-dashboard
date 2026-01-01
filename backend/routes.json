@@ -32,5 +32,23 @@
     "mask": "255.255.0.0",
     "gateway": "10.12.0.1",
     "ciders": []
+  },
+  {
+    "cluster": "production",
+    "identity": "afee05c8-e4e9-4517-8735-9be8b5b3e73f",
+    "name": "我的手机",
+    "private_ip": "10.12.0.11",
+    "mask": "255.255.0.0",
+    "gateway": "10.12.0.1",
+    "ciders": []
+  },
+  {
+    "cluster": "office",
+    "identity": "fa090728-d83d-4d06-a7fb-a92cf2c76834",
+    "name": "远程办公电脑",
+    "private_ip": "10.12.0.10",
+    "mask": "255.255.0.0",
+    "gateway": "10.12.0.1",
+    "ciders": []
   }
 ]

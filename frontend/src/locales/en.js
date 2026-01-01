@@ -28,7 +28,9 @@ export default {
   
   nav: {
     topology: 'VPN Tunnels',
+    aiChat: 'AI Assistant',
     logout: 'Logout',
+    subtitle: 'AI-Powered · Smart Routing',
   },
   
   footer: {
@@ -39,7 +41,7 @@ export default {
   
   login: {
     title: 'Rustun Dashboard',
-    subtitle: 'AI-Powered Smart VPN Tunnel',
+    subtitle: '🚀 Open Source · AI-Powered · Smart Routing · P2P Direct',
     username: 'Username',
     password: 'Password',
     loginButton: 'Login',
@@ -142,6 +144,41 @@ export default {
   logout: {
     confirmTitle: 'Confirm Logout',
     confirmMessage: 'Are you sure you want to logout?',
+  },
+
+  ai: {
+    title: 'AI Assistant',
+    subtitle: 'Your Operations Helper & Technical Advisor',
+    welcome: '👋 Hello! I\'m your Rustun AI Assistant',
+    welcomeDesc: 'I can not only help you manage VPN tunnels and client configurations, but also answer technical questions and provide deployment solutions. Whether it\'s operations or technical consulting, I\'m here to help!',
+    quickActions: 'Quick Actions',
+    action1: 'List all clusters and clients',
+    action2: 'Create a new client',
+    action3: 'What are Rustun\'s features?',
+    action4: 'How to enable P2P direct connection?',
+    inputPlaceholder: 'Ask me operations, technical, or deployment questions... (Ctrl+Enter to send)',
+    send: 'Send',
+    clearHistory: 'Clear History',
+    thinking: 'Thinking...',
+    cleared: 'History cleared',
+    clearConfirmTitle: 'Confirm Clear',
+    clearConfirmMessage: 'Are you sure you want to clear all conversation history?',
+    error: 'Failed to send',
+    tips: '💡 What I Can Help You With',
+    tip1: '🔧 Operations: Create/Query/Update/Delete clusters and clients',
+    tip2: '📖 Technical: Answer questions about Rustun\'s architecture, features, configurations',
+    tip3: '💡 Solutions: Provide deployment plans for remote work, intranet penetration, etc.',
+    toolsUsed: '🔧 Tools Used',
+    parameters: 'Parameters',
+    result: 'Result',
+    tools: {
+      listClusters: 'List Clusters',
+      listClients: 'List Clients',
+      getClient: 'Get Details',
+      createClient: 'Create Client',
+      updateClient: 'Update Client',
+      deleteClient: 'Delete Client',
+    }
   },
 }
 

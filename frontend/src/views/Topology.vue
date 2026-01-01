@@ -1,29 +1,28 @@
 <template>
-  <layout>
-    <div class="topology-page">
-      <!-- Operation Tips -->
-      <el-alert
-        type="info"
-        :closable="false"
-        class="tips-alert"
-      >
-        <div class="tips-content">
-          <div class="tip-item">
-            <el-icon color="#409eff"><Mouse /></el-icon>
-            <span>{{ t('topology.tip1') }}</span>
-          </div>
-          <div class="tip-item">
-            <el-icon color="#67c23a"><Connection /></el-icon>
-            <span>{{ t('topology.tip2') }}</span>
-          </div>
-          <div class="tip-item">
-            <el-icon color="#e6a23c"><Edit /></el-icon>
-            <span>{{ t('topology.tip3') }}</span>
-          </div>
+  <div class="topology-page">
+    <!-- Operation Tips -->
+    <el-alert
+      type="info"
+      :closable="false"
+      class="tips-alert"
+    >
+      <div class="tips-content">
+        <div class="tip-item">
+          <el-icon color="#409eff"><Mouse /></el-icon>
+          <span>{{ t('topology.tip1') }}</span>
         </div>
-      </el-alert>
-      
-      <!-- Topology Visualization -->
+        <div class="tip-item">
+          <el-icon color="#67c23a"><Connection /></el-icon>
+          <span>{{ t('topology.tip2') }}</span>
+        </div>
+        <div class="tip-item">
+          <el-icon color="#e6a23c"><Edit /></el-icon>
+          <span>{{ t('topology.tip3') }}</span>
+        </div>
+      </div>
+    </el-alert>
+    
+    <!-- Topology Visualization -->
       <el-card class="topology-card" v-loading="store.loading">
         <template #header>
           <div class="card-header">
@@ -74,13 +73,12 @@
             <span>{{ t('topology.client') }}</span>
           </div>
           
-          <div class="legend-item">
-            <div class="legend-edge"></div>
-            <span>{{ t('client.routes') }}</span>
-          </div>
+        <div class="legend-item">
+          <div class="legend-edge"></div>
+          <span>{{ t('client.routes') }}</span>
         </div>
-      </el-card>
-    </div>
+      </div>
+    </el-card>
     
     <!-- Client Management Dialog -->
     <el-dialog
@@ -229,18 +227,17 @@
         </el-button>
       </div>
     </el-dialog>
-  </layout>
+  </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Plus, Edit, Delete, ArrowDown, Mouse, Connection, View } from '@element-plus/icons-vue'
+import { Plus, Edit, Delete, ArrowDown, Mouse, Connection, View, Refresh } from '@element-plus/icons-vue'
 import { Network } from 'vis-network/standalone'
 import { useAppStore } from '../store'
 import { createClient, updateClient, deleteClient } from '../api/clients'
-import Layout from '../components/Layout.vue'
 
 const { t } = useI18n()
 const store = useAppStore()

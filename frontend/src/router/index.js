@@ -9,9 +9,24 @@ const routes = [
   },
   {
     path: '/',
-    name: 'Topology',
-    component: () => import('../views/Topology.vue'),
+    component: () => import('../components/Layout.vue'),
     meta: { requiresAuth: true },
+    children: [
+      {
+        path: '',
+        redirect: '/topology'
+      },
+      {
+        path: 'topology',
+        name: 'Topology',
+        component: () => import('../views/Topology.vue'),
+      },
+      {
+        path: 'ai',
+        name: 'AIChat',
+        component: () => import('../views/AIChat.vue'),
+      }
+    ]
   },
 ]
 

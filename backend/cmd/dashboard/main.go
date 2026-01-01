@@ -3,8 +3,11 @@ package main
 import (
 	"flag"
 	"log"
+	"os"
+	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/smartethnet/rustun-dashboard/internal/agent"
 	"github.com/smartethnet/rustun-dashboard/internal/handler"
 	"github.com/smartethnet/rustun-dashboard/internal/ipadm"
 	"github.com/smartethnet/rustun-dashboard/internal/middleware"
@@ -90,6 +93,45 @@ func main() {
 	clusterHandler := handler.NewClusterHandler(routeService)
 	clientHandler := handler.NewClientHandler(routeService)
 
+	// Initialize AI agent if enabled
+	var agentHandler *handler.AgentHandler
+	if cfg.Agent.Enabled {
+		provider := cfg.Agent.Provider
+		if provider == "" {
+			provider = "openai"
+		}
+
+		var apiKey string
+		switch provider {
+		case "deepseek":
+			apiKey = cfg.Agent.DeepSeekAPIKey
+			if apiKey == "" {
+				apiKey = os.Getenv("DEEPSEEK_API_KEY")
+			}
+		case "openai":
+			apiKey = cfg.Agent.OpenAIAPIKey
+			if apiKey == "" {
+				apiKey = os.Getenv("OPENAI_API_KEY")
+			}
+		default:
+			log.Printf("Unknown AI provider: %s, falling back to OpenAI", provider)
+			provider = "openai"
+			apiKey = cfg.Agent.OpenAIAPIKey
+			if apiKey == "" {
+				apiKey = os.Getenv("OPENAI_API_KEY")
+			}
+		}
+
+		if apiKey != "" {
+			aiAgent := agent.NewAgent(apiKey, cfg.Agent.Model, cfg.Agent.BaseURL, provider, routeService)
+			agentHandler = handler.NewAgentHandler(aiAgent)
+			log.Printf("AI Agent enabled with provider: %s, model: %s", provider, cfg.Agent.Model)
+		} else {
+			log.Printf("AI Agent enabled but no API key provided for %s. Set %s_API_KEY env var or configure in config.yaml",
+				provider, strings.ToUpper(provider))
+		}
+	}
+
 	// Setup router
 	r := gin.Default()
 
@@ -123,6 +165,15 @@ func main() {
 			clients.GET("/:cluster/:identity", clientHandler.GetClient)
 			clients.PUT("/:cluster/:identity", clientHandler.UpdateClient)
 			clients.DELETE("/:cluster/:identity", clientHandler.DeleteClient)
+		}
+
+		// Agent routes (if enabled)
+		if agentHandler != nil {
+			agentGroup := api.Group("/agent")
+			{
+				agentGroup.POST("/chat", agentHandler.Chat)
+				agentGroup.POST("/chat/stream", agentHandler.StreamChat)
+			}
 		}
 	}
 
